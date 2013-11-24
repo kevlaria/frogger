@@ -12,7 +12,7 @@ public class Car extends Sprite{
 	Image image;
 	
 	public Car(){
-		this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
+		draw();
 	}
 	
 	@Override
@@ -23,7 +23,7 @@ public class Car extends Sprite{
 
 	@Override
 	void draw() {
-		image = loadImage("src/Images_for_Frogger/white-car-right.png");
+		this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
 	}
 	
 	public Image loadImage(String fileName){
