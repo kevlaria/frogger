@@ -1,3 +1,4 @@
+package frogger;
 
 public abstract class Sprite {
 
