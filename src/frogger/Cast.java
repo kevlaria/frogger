@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 public class Cast {
 	 ArrayList<Sprite> spriteList = new ArrayList<Sprite>();
-
-
 	
 	public ArrayList<Sprite> getSprites()
 	{
