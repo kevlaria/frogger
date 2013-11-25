@@ -11,5 +11,6 @@ public abstract class Sprite extends Observable{
 	abstract void draw();
 	
 	abstract Image getImage();
-	
+	abstract int getX();
+	abstract int getY();
 }

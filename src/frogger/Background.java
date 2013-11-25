@@ -1,46 +1,36 @@
 package frogger;
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.Button;
+import java.awt.Color;
+import java.awt.Graphics;
 
 
-public class Background extends JFrame {
+public class Background {
 
-	private JPanel contentPane;
+	private static final int centerDivideHeight = 10;
+	private static final int centerDivideWidth = 20;
+	
+	public Background() {}
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Background frame = new Background();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public Background() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+	public void draw(Graphics g, int width, int height){
 		
-		Button button = new Button("New button");
-		contentPane.add(button, BorderLayout.WEST);
-	}
+		// draw the road
+		
+		int margin = height / 4;
+		
+		g.setColor(Color.GRAY);
+		g.fillRect(0, margin, width, margin * 2);
 
+		// Draw the center divide
+		
+		int xCoordinate = 0;
+		int yCoordinate = (height / 2) - (centerDivideHeight / 2);
+		
+		g.setColor(Color.YELLOW);
+		
+		while (width > (xCoordinate + centerDivideWidth)){
+			g.fillRect(xCoordinate, yCoordinate, centerDivideWidth, centerDivideHeight);
+			xCoordinate = xCoordinate + (2 * centerDivideWidth);
+		}
+		
+	}
 }
