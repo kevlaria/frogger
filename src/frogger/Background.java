@@ -9,9 +9,21 @@ public class Background {
 	private static final int centerDivideHeight = 10;
 	private static final int centerDivideWidth = 20;
 	
-	public Background() {}
+	protected Frogger controller;
+	protected View view;
+	private int width;
+	private int height;
+	
+	public Background() {
+	}
+	
+	
 
-	public void draw(Graphics g, int width, int height){
+	public void draw(Graphics g){
+
+		this.width = view.getWidth();
+		this.height = view.getHeight();
+
 		
 		// draw the road
 		

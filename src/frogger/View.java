@@ -11,18 +11,19 @@ import javax.swing.JPanel;
 public class View extends JPanel implements Observer{
 
 	Car car;
-	private Background background;
+	protected Background background;
 	protected Frogger controller;
 
 	public View(){
-		background = new Background();
 	}
 	
 	
     @Override
     public void paint(Graphics g) {
-    	
-    	background.draw(g, this.getWidth(), this.getHeight());
+
+		this.background = controller.getBackgroundObject();
+
+    	background.draw(g);
     	
     	Cast cast = controller.getCast();
     	ArrayList<Sprite> spriteList = cast.getSprites();
@@ -30,7 +31,7 @@ public class View extends JPanel implements Observer{
     	for (int i = 0; i < castSize; i++){
     		Sprite sprite = spriteList.get(i);
     		Image spriteImage = sprite.getImage();
-    		g.drawImage(spriteImage, sprite.getX(), sprite.getY(), this);
+    		sprite.draw(g);
     	}
     }
 
@@ -40,6 +41,8 @@ public class View extends JPanel implements Observer{
 		repaint();
 		
 	}
+	
+
     
 	
 }

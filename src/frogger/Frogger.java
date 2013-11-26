@@ -16,6 +16,7 @@ public class Frogger extends JFrame implements Runnable{
 	private View view;
 	private JFrame frame;
 	private Car car;
+	private Background background;
 	
 	/**
 	 * Launch the application.
@@ -23,6 +24,8 @@ public class Frogger extends JFrame implements Runnable{
 	public Frogger(){
 		this.cast = new Cast();
 		this.view = new View();
+		this.background = new Background();
+		
 	}
 	
 	public static void main(String[] args) {
@@ -30,11 +33,18 @@ public class Frogger extends JFrame implements Runnable{
 	}
 	
 	public void run(){	
-		view.controller = this;
 		
-		this.cast.addSprites(new Car());
-		this.cast.addSprites(new Car());
-		this.cast.addSprites(new Car());
+		/**
+		 * Controller assigns Background and View to each other, as well as the controller
+		 */
+		this.view.controller = this;
+		this.background.controller = this;
+		
+		background.view = this.view;
+		
+		this.cast.addSprites(this.createNewCar());
+		this.cast.addSprites(this.createNewCar());
+		this.cast.addSprites(this.createNewCar());
 		
 		this.frame = this.drawJFrame();
  		this.frame.add(view);
@@ -51,6 +61,12 @@ public class Frogger extends JFrame implements Runnable{
 		return frame;
 	}
 	
+	
+	public Car createNewCar(){
+		Car car = new Car();
+		car.view = this.view;
+		return car;
+	}
 
 	
 	/***********
@@ -59,6 +75,14 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	public Cast getCast(){
 		return this.cast;
+	}
+	
+	public Background getBackgroundObject(){
+		return this.background;
+	}
+	
+	public View getView(){
+		return this.view;
 	}
 	
 }

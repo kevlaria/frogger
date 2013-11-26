@@ -6,18 +6,23 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 public class Car extends Sprite{
 
     Image image;
-    int x = 0;
-    int y = 48; // this is a little arbitrary...
+    int x;
+    int y; 
+    JFrame frame;
+    View view;
     
     public Car(){
-            draw();
-    }
+    	this.x = 0;
+    	this.y = 48;    	// this is a little arbitrary...
+    }    
     
     @Override
     void update() {
@@ -25,10 +30,17 @@ public class Car extends Sprite{
             
     }
 
-    @Override
-    void draw() {
-            this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
-    }
+   
+	@Override
+	void draw(Graphics g) {	
+		
+		Random random = new Random();
+    	this.x = random.nextInt(this.view.getWidth()); // this is implemented temporarily to ensure that we can get multiple images of the Car on the road
+		
+        this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
+		g.drawImage(this.image, x, y, this.view);	
+	}
+
     
     public Image loadImage(String fileName){
             BufferedImage img = null;
@@ -56,6 +68,7 @@ public class Car extends Sprite{
 	int getY() {
 		return y;
 	}
+
     
     
 }
