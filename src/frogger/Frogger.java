@@ -48,9 +48,7 @@ public class Frogger extends JFrame implements Runnable{
 		/**
 		 * Controller assigns Background and View to each other, as well as the controller
 		 */
-		this.view.controller = this;
-		this.background.controller = this;
-		
+		this.view.controller = this;		
 		background.view = this.view;
 		
 		this.cast.addSprites(this.createNewCar());
@@ -63,10 +61,12 @@ public class Frogger extends JFrame implements Runnable{
  		this.buttonPanel = this.createButtonPanel();
  		this.frame.add(buttonPanel, BorderLayout.SOUTH);
 		this.frame.setVisible(true);
-		this.attachListenersToButtons();
 	}
 	
-	
+	/**
+	 * Method to create the frame for the game
+	 * @return The frame for the game
+	 */
 	public JFrame drawJFrame(){
 		frame = new JFrame();
 		frame.setTitle("Frogger");
@@ -77,17 +77,28 @@ public class Frogger extends JFrame implements Runnable{
 		return frame;
 	}
 	
+	/**
+	 * Method to create the Go / Pause button panel
+	 * @return the button panel
+	 */
 	public JPanel createButtonPanel(){
 		JPanel panel = new JPanel();
+		panel.setBackground(Color.BLACK);
+
+		// add buttons
+		
 		this.goButton = new JButton("Go!");
 		this.pauseButton = new JButton("Pause");
 		panel.add(goButton);
 		panel.add(pauseButton);
-		panel.setBackground(Color.BLACK);
+		this.attachListenersToButtons();
 		return panel;
 	}
 	
-	
+	/**
+	 * Method to create a new Car object
+	 * @return a Car object
+	 */
 	public Car createNewCar(){
 		Car car = new Car();
 		car.view = this.view;
@@ -95,19 +106,6 @@ public class Frogger extends JFrame implements Runnable{
 		return car;
 	}
 	
-	private class Move extends TimerTask {
-		public void run(){
-			Cast cast = getCast();
-			ArrayList<Sprite> spriteList = cast.getSprites();
-	    	int castSize = spriteList.size();
-	    	for (int i = 0; i < castSize; i++){
-	    		Sprite sprite = spriteList.get(i);
-	    		sprite.update();
-	    	}
-			
-		}
-	}
-
 
 	/***********
 	 * ADDING BUTTON ACTION COMPONENTS
@@ -136,6 +134,24 @@ public class Frogger extends JFrame implements Runnable{
 				timer.cancel();
 			}		
 		});
+	}
+	
+	/**
+	 * Inner class that is implemented when Timer is running
+	 * Updates all Sprite objects when Timer runs
+	 *
+	 */
+	private class Move extends TimerTask {
+		public void run(){
+			Cast cast = getCast();
+			ArrayList<Sprite> spriteList = cast.getSprites();
+	    	int castSize = spriteList.size();
+	    	for (int i = 0; i < castSize; i++){
+	    		Sprite sprite = spriteList.get(i);
+	    		sprite.update();
+	    	}
+			
+		}
 	}
 	
 	

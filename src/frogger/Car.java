@@ -13,9 +13,8 @@ import javax.swing.JFrame;
 
 public class Car extends Sprite{
 
-    Image image;
-    JFrame frame;
-    View view;
+    private Image image;
+    protected View view; // this is assigned by the Frogger class
     
     public Car(){
     	this.x = -10;
@@ -24,6 +23,10 @@ public class Car extends Sprite{
     	this.dy = 0;
     }    
     
+    
+    /**
+     * Method to move car
+     */
     @Override
     void update() {
     	x += dx; 	
@@ -32,15 +35,20 @@ public class Car extends Sprite{
     }
     
    
+    /**
+     * Method to draw image
+     */
 	@Override
-	void draw(Graphics g) {	
-		
-		Random random = new Random();		
+	void draw(Graphics g) {			
         this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
 		g.drawImage(this.image, x, y, this.view);	
 	}
 
-    
+    /**
+     * Method to load image
+     * @param fileName
+     * @return
+     */
     public Image loadImage(String fileName){
             BufferedImage img = null;
             try {
@@ -53,6 +61,20 @@ public class Car extends Sprite{
             
     }
 
+    /**
+     * Method to identify what type of Sprite this object is
+     * TODO - determine whether this is actually needed or not
+     */
+	@Override
+	String getSpriteType() {
+		return "Car";
+	}   
+    
+	/***********
+	 * GETTER AND SETTER METHODS
+	 * *********
+	 */
+	
     @Override
     public Image getImage() {
             return this.image;
@@ -68,10 +90,7 @@ public class Car extends Sprite{
 		return y;
 	}
 
-	@Override
-	String getSpriteType() {
-		return "Car";
-	}
+
 
     
     
