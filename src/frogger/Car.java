@@ -14,29 +14,28 @@ import javax.swing.JFrame;
 public class Car extends Sprite{
 
     Image image;
-    int x;
-    int y; 
     JFrame frame;
     View view;
     
     public Car(){
-    	this.x = 0;
+    	this.x = -10;
     	this.y = 48;    	// this is a little arbitrary...
+    	this.dx = 1; 		// starting velocity
+    	this.dy = 0;
     }    
     
     @Override
     void update() {
-            // TODO Auto-generated method stub
-            
+    	x += dx; 	
+    	setChanged();
+    	notifyObservers(); 
     }
-
+    
    
 	@Override
 	void draw(Graphics g) {	
 		
-		Random random = new Random();
-    	this.x = random.nextInt(this.view.getWidth()); // this is implemented temporarily to ensure that we can get multiple images of the Car on the road
-		
+		Random random = new Random();		
         this.image = loadImage("src/Images_for_Frogger/white-car-right.png");
 		g.drawImage(this.image, x, y, this.view);	
 	}
@@ -67,6 +66,11 @@ public class Car extends Sprite{
 	@Override
 	int getY() {
 		return y;
+	}
+
+	@Override
+	String getSpriteType() {
+		return "Car";
 	}
 
     

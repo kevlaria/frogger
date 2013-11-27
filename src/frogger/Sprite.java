@@ -10,7 +10,7 @@ public abstract class Sprite extends Observable{
 	int dx,  dy;
 	abstract void update(); 
 	abstract void draw(Graphics g);
-	
+	abstract String getSpriteType();	
 	abstract Image getImage();
 	abstract int getX();
 	abstract int getY();
