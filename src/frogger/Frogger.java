@@ -22,12 +22,12 @@ public class Frogger extends JFrame implements Runnable{
 	private Cast cast;
 	private View view;
 	private JFrame frame;
-	private Car car;
 	private Background background;
 	private Timer timer;
 	private JButton goButton;
 	private JButton pauseButton;
 	private JPanel buttonPanel;
+	private int carCount;
 	
 	/**
 	 * Launch the application.
@@ -36,6 +36,7 @@ public class Frogger extends JFrame implements Runnable{
 		this.cast = new Cast();
 		this.view = new View();
 		this.background = new Background();
+		this.carCount = 0;
 		
 	}
 	
@@ -51,6 +52,9 @@ public class Frogger extends JFrame implements Runnable{
 		this.view.controller = this;		
 		background.view = this.view;
 		
+		this.cast.addSprites(this.createNewCar());
+		this.cast.addSprites(this.createNewCar());
+		this.cast.addSprites(this.createNewCar());
 		this.cast.addSprites(this.createNewCar());
 		this.cast.addSprites(this.createNewCar());
 		this.cast.addSprites(this.createNewCar());
@@ -70,7 +74,7 @@ public class Frogger extends JFrame implements Runnable{
 	public JFrame drawJFrame(){
 		frame = new JFrame();
 		frame.setTitle("Frogger");
-		frame.setMinimumSize(new Dimension(800, 250));
+		frame.setMinimumSize(new Dimension(800, 300));
 	 	frame.setResizable(false);
 	 	frame.setLayout(new BorderLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,6 +107,8 @@ public class Frogger extends JFrame implements Runnable{
 		Car car = new Car();
 		car.view = this.view;
 		car.addObserver(view);
+		car.initialiseCar(this.carCount);
+		this.carCount = this.carCount + 1;
 		return car;
 	}
 	

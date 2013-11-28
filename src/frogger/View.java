@@ -41,7 +41,6 @@ public class View extends JPanel implements Observer{
 		repaint();
 		
 	}
-	
 
     
 	
