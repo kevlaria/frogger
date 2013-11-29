@@ -2,6 +2,7 @@ package frogger;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -14,6 +15,7 @@ import java.util.TimerTask;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 
@@ -31,6 +33,12 @@ public class Frogger extends JFrame implements Runnable{
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
 
 	protected Frog frog;
+	private JTextField scorePanel;
+	private int score;
+	private JTextField livesPanel;
+	private int lives;
+	boolean isGameOver;
+
 
 	
 	/**
@@ -41,6 +49,9 @@ public class Frogger extends JFrame implements Runnable{
 		this.view = new View();
 		this.background = new Background();
 		this.carCount = 0;
+		this.score = 0;
+		this.lives = 3;
+		this.isGameOver = false;
 		
 	}
 	
@@ -56,13 +67,7 @@ public class Frogger extends JFrame implements Runnable{
 		this.view.controller = this;		
 		background.view = this.view;
 		
-		
-		this.cast.addSprites(this.createNewCar());
-		this.cast.addSprites(this.createNewCar());
-		this.cast.addSprites(this.createNewCar());
-		this.cast.addSprites(this.createNewCar());
-		this.cast.addSprites(this.createNewCar());
-		this.cast.addSprites(this.createNewCar());
+		this.addCars(10);
 	
 		
 		//Add Frog
@@ -72,7 +77,7 @@ public class Frogger extends JFrame implements Runnable{
 		this.frame = this.drawJFrame();
  		this.frame.add(view, BorderLayout.CENTER);
  		
- 		this.buttonPanel = this.createButtonPanel();
+ 		this.buttonPanel = this.createControlPanel();
  		this.frame.add(buttonPanel, BorderLayout.SOUTH);
 		this.frame.setVisible(true);
 		this.frame.requestFocus();
@@ -129,8 +134,25 @@ public class Frogger extends JFrame implements Runnable{
             }
         });
 	}
+	
+	/**
+	 * Determines if the game has finished or not. Game finishes if this.lives = 0;
+	 * @return boolean to determine whether game has finished or not.
+	 */
+	public boolean isGameOver(){
+		this.isGameOver = false;
+		if (this.lives <= 0){
+			this.isGameOver = true;
+			background.setIsGameOver(true);
+		}
+		return this.isGameOver;
+	}
 		   
 
+	/***********
+	 * COMPONENT CREATION METHODS
+	 * *********
+	 */
 
 	/**
 	 * Method to create the frame for the game
@@ -149,15 +171,33 @@ public class Frogger extends JFrame implements Runnable{
 	}
 	
 	/**
+	 * Method to create the control panel
+	 * @return the control panel
+	 */
+	public JPanel createControlPanel(){
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.BLACK);
+		panel.setLayout(new BorderLayout());
+		
+		JPanel buttonPanel = this.createButtonPanel();
+		panel.add(buttonPanel, BorderLayout.CENTER);
+		
+		JPanel scorePanel = this.createScorePanel();
+		panel.add(scorePanel, BorderLayout.EAST);
+		
+		JPanel livesPanel = this.createLivesPanel();
+		panel.add(livesPanel, BorderLayout.WEST);
+
+		return panel;
+	}
+
+	/**
 	 * Method to create the Go / Pause button panel
 	 * @return the button panel
 	 */
 	public JPanel createButtonPanel(){
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.BLACK);
-
-		// add buttons
-		
 		this.goButton = new JButton("Go!");
 		goButton.setFocusable(false);
 		this.pauseButton = new JButton("Pause");
@@ -167,6 +207,54 @@ public class Frogger extends JFrame implements Runnable{
 		this.attachListenersToButtons();
 		return panel;
 	}
+	
+	/**
+	 * Creates a text panel that registers the score
+	 * @return a text panel with the current score
+	 */
+	public JPanel createScorePanel(){
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.BLACK);
+		
+		scorePanel = new JTextField();
+		scorePanel.setFont(new Font("San Serif", Font.BOLD, 15));
+		scorePanel.setText("Current score: " + Integer.toString(this.score));
+		scorePanel.setEditable(false);
+		panel.add(scorePanel);
+		return panel;
+	}
+	
+	/**
+	 * Creates a text panel that registers the number of lives remaining
+	 * @return a text panel with the number of lives remaining
+	 */
+	public JPanel createLivesPanel(){
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.BLACK);
+		
+		livesPanel = new JTextField();
+		livesPanel.setFont(new Font("San Serif", Font.BOLD, 15));
+		livesPanel.setText("Lives left: " + Integer.toString(this.lives));
+		livesPanel.setEditable(false);
+		panel.add(livesPanel);
+		return panel;
+	}
+	
+	
+	/**
+	 * Method to determine the number of cars in the game
+	 * @param numberOfCars
+	 */
+	public void addCars(int numberOfCars){	
+		for (int i = 0; i < numberOfCars; i++){
+			this.cast.addSprites(this.createNewCar());			
+		}
+	}
+	
+	/***********
+	 * SPRITE CREATION METHODS
+	 * *********
+	 */
 	
 	/**
 	 * Method to create a new Car object
@@ -183,8 +271,8 @@ public class Frogger extends JFrame implements Runnable{
 	
 
 	/**
-	 * Method to create a new Car object
-	 * @return a Car object
+	 * Method to create a new Frog object
+	 * @return a Frog object
 	 */
 	public Frog createNewFrog(){
 		Frog frog = new Frog();
@@ -229,14 +317,19 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	private class Move extends TimerTask {
 		public void run(){
-			Cast cast = getCast();
-			ArrayList<Sprite> spriteList = cast.getSprites();
-	    	int castSize = spriteList.size();
-	    	//Every Sprite except the last sprite, Frog 
-	    	for (int i = 0; i < castSize-1; i++){
-	    		Sprite sprite = spriteList.get(i);
-	    		sprite.update();
-	    	}
+			
+			if(!isGameOver()){	 // Only run if the game is not yet over			
+				Cast cast = getCast();
+				ArrayList<Sprite> spriteList = cast.getSprites();
+		    	int castSize = spriteList.size();
+		    	//Every Sprite except the last sprite, Frog 
+		    	for (int i = 0; i < castSize-1; i++){
+		    		Sprite sprite = spriteList.get(i);
+		    		sprite.update();
+		    	}			
+			} else {
+				frame.repaint();
+			}
 			
 		}
 	}

@@ -16,27 +16,33 @@ public class Car extends Sprite{
     private Image image;
     protected View view; // this is assigned by the Frogger class
     boolean facingRight;
+   
+    private int velocity;
     
     private static final int leftMostXCoordinate = -50;
     private static final int rightMostXCoordinate = 700;
     
-    public Car(){};
+    public Car(){
+    	this.velocity = 5;
+    	this.dy = 0; 
+    };
     
-    public void initialiseCar(int carCount){
-    	
+    /**
+     * Creates each car object and places it in its starting position
+     * @param carCount
+     */
+    public void initialiseCar(int carCount){	
     	String imagePath = this.createCarSpecs(carCount);
-    	    	
+
     	if (this.facingRight){
             this.image = loadImage(imagePath);
         	this.y = 65;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = 10; 		// starting velocity
-        	this.dy = 0;  
+        	this.dx = velocity; 		// starting velocity
 
     	} else {
             this.image = loadImage(imagePath);
         	this.y = 130;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = -10; 		// starting velocity
-        	this.dy = 0;    			
+        	this.dx = -velocity; 		// starting velocity   			
     	}	    	
     }
    
@@ -58,9 +64,14 @@ public class Car extends Sprite{
     	return imagePath;
     }
     
+    /**
+     * Method to determine the starting X position of the car
+     * @param carCount
+     */
     public void setStartingX(int carCount){
     	
-    	int carDensity = 100;
+    	Random random = new Random();
+    	int carDensity = 100 + random.nextInt(10);
     	
     	if(this.facingRight){
     		this.x = leftMostXCoordinate + (carDensity * carCount);
@@ -146,8 +157,7 @@ public class Car extends Sprite{
      * Method to draw image
      */
 	@Override
-	void draw(Graphics g) {			
-
+	void draw(Graphics g) {	
 		g.drawImage(this.image, x, y, this.view);	
 	}
 
