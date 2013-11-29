@@ -136,6 +136,44 @@ public class Frogger extends JFrame implements Runnable{
 	}
 	
 	/**
+	 * Method to determine whether frog is hit or not
+	 * Compares the x / y coordinates of the frog and all the cars
+	 */
+	public boolean isFrogSquished(Sprite sprite){	
+		boolean isFrogSquished = false;
+		
+		int spriteWidth = 20; // temporary
+		int spriteHeight = 10; // temporary
+		
+		int frogWidth = 10; // temporary
+		int frogHeight = 10; // temporary
+		
+		int spriteMinX = sprite.getX() - spriteWidth;
+		int spriteMaxX = sprite.getX() + spriteWidth;
+		
+		int spriteMinY = sprite.getY() - spriteHeight;
+		int spriteMaxY = sprite.getY() + spriteHeight;
+		
+		int frogMinX = this.frog.getX() - frogWidth;
+		int frogMaxX = this.frog.getX() + frogWidth;
+
+		int frogMinY = this.frog.getY() - frogHeight;
+		int frogMaxY = this.frog.getY() + frogHeight;
+		
+		if (	(frogMinX >= spriteMinX && frogMinX <= spriteMaxX) || // frog's left side is within car range
+			(frogMaxX >= spriteMinX && frogMaxX <= spriteMaxX)	) { // frog's right side within car range
+				 if (	(frogMinY >= spriteMinY && frogMinY <= spriteMaxY) || // frog's bottom side is within car range
+						(frogMaxY >= spriteMinY && frogMaxY <= spriteMaxY)	) { // frog's top side within car range
+				    			System.out.print("OUCH!");
+				    			isFrogSquished = true;
+				    			this.frog.Alive = false;
+				    			this.lives = lives - 1;
+				 }
+    	}
+    	return isFrogSquished;
+	}
+	
+	/**
 	 * Determines if the game has finished or not. Game finishes if this.lives = 0;
 	 * @return boolean to determine whether game has finished or not.
 	 */
@@ -165,8 +203,6 @@ public class Frogger extends JFrame implements Runnable{
 	 	frame.setResizable(false);
 	 	frame.setLayout(new BorderLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-
 		return frame;
 	}
 	
@@ -242,7 +278,7 @@ public class Frogger extends JFrame implements Runnable{
 	
 	
 	/**
-	 * Method to determine the number of cars in the game
+	 * Method to add cars in the game
 	 * @param numberOfCars
 	 */
 	public void addCars(int numberOfCars){	
@@ -326,7 +362,11 @@ public class Frogger extends JFrame implements Runnable{
 		    	for (int i = 0; i < castSize-1; i++){
 		    		Sprite sprite = spriteList.get(i);
 		    		sprite.update();
-		    	}			
+			    	if (isFrogSquished(sprite)){
+			    		lives = lives - 1;
+			    	}
+		    	}
+
 			} else {
 				frame.repaint();
 			}
