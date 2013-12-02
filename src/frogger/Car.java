@@ -16,7 +16,6 @@ public class Car extends Sprite{
     private Image image;
     protected View view; // this is assigned by the Frogger class
     boolean facingRight;
-   
     private int velocity;
     
     private static final int leftMostXCoordinate = -50;
@@ -37,12 +36,12 @@ public class Car extends Sprite{
     	if (this.facingRight){
             this.image = loadImage(imagePath);
         	this.y = 65;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = velocity; 		// starting velocity
+        	this.dx = this.velocity; 		// starting velocity
 
     	} else {
             this.image = loadImage(imagePath);
         	this.y = 130;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = -velocity; 		// starting velocity   			
+        	this.dx = -this.velocity; 		// starting velocity   			
     	}	    	
     }
    
@@ -124,14 +123,14 @@ public class Car extends Sprite{
     }
     
     
+    /**
+     * Method to change velocity of the car
+     */
     public void changeVelocity(int newVelocity)
     {
-    	if (this.facingRight)
-    	{
+    	if (this.facingRight) {
     	this.dx += newVelocity;
-    	}
-    	else
-    	{
+    	} else {
     	this.dx -= newVelocity;
     	}
     }
@@ -154,13 +153,11 @@ public class Car extends Sprite{
         	}    		
     	} else {
     		
-    		// Return car to the end, if off the screen, if it's facing left
-    		
+    		// Return car to the end, if off the screen, if it's facing left	
     		if (x < 0 - carLength){
     			x = xLimit + carLength;
     		}
-    	}
-    	
+    	}	
     	setChanged();
     	notifyObservers(); 
     }
@@ -191,24 +188,10 @@ public class Car extends Sprite{
             
     }
 
-    /**
-     * Method to identify what type of Sprite this object is
-     * TODO - determine whether this is actually needed or not
-     */
-	@Override
-	String getSpriteType() {
-		return "Car";
-	}   
-    
 	/***********
 	 * GETTER AND SETTER METHODS
 	 * *********
 	 */
-	
-    @Override
-    public Image getImage() {
-            return this.image;
-    }
 
 	@Override
 	int getX() {
@@ -220,10 +203,14 @@ public class Car extends Sprite{
 		return y;
 	}
 
+	@Override
+	int getImageWidth() {
+		return this.image.getWidth(view);
+	}
 
-
-
-
-    
-    
+	@Override
+	int getImageHeight() {
+		return this.image.getHeight(view);
+	}
+  
 }

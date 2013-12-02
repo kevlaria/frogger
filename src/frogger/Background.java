@@ -52,7 +52,7 @@ public class Background {
 			// Print "GAME OVER"
 			g.setColor(Color.RED);
 			g.setFont(new Font("San Serif", Font.BOLD, 50));
-			g.drawString("GAME OVER", view.getWidth() / 4, 50);	
+			g.drawString("GAME OVER", view.getWidth() / 4 + 25, 50);	
 		}
 		
 	}

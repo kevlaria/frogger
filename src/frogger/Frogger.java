@@ -21,25 +21,25 @@ import javax.swing.JTextField;
 
 public class Frogger extends JFrame implements Runnable{
 
-	Cast cast;
-	View view;
-	JFrame frame;
-	boolean isPaused;
+	private JFrame frame;
+	private View view;
 	private Background background;
-	private Timer timer;
 	private JButton goButton;
 	private JButton pauseButton;
 	private JPanel buttonPanel;
-	private int carCount;
-	public enum Orientation { UP, RIGHT, DOWN, LEFT };
-	
+
+	private Cast cast;
 	protected Frog frog;
-	JTextField scorePanel;
-	 int score;
-	JTextField livesPanel;
+	public enum Orientation { UP, RIGHT, DOWN, LEFT };
+	private int carCount;
+	
+	private JTextField scorePanel;
+	int score;
+	private JTextField livesPanel;
 	private int lives;
 	boolean isGameOver;
-
+	boolean isPaused;
+	private Timer timer;
 
 	
 	/**
@@ -52,25 +52,27 @@ public class Frogger extends JFrame implements Runnable{
 		this.carCount = 0;
 		this.score = 0;
 		this.lives = 3;
-		this.isGameOver = false;
-		
+		this.isGameOver = false;		
+		this.isPaused = true;
 	}
 	
 	public static void main(String[] args) {
 		new Frogger().run();
 	}
 	
+	/**
+	 * Method to run the game
+	 */
 	public void run(){	
 
 		/**
 		 * Controller assigns Background and View to each other, as well as the controller
 		 */
 		this.view.controller = this;		
-		background.view = this.view;
+		this.background.view = this.view;
+		
 		
 		this.addCars(10);
-		isPaused = true;
-		
 		//Add Frog
 		this.frog = this.createNewFrog();
 		this.cast.addSprites(frog);
@@ -82,132 +84,14 @@ public class Frogger extends JFrame implements Runnable{
  		this.frame.add(buttonPanel, BorderLayout.SOUTH);
 		this.frame.setVisible(true);
 		this.frame.requestFocus();
-		pack();
-	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.pack();
+	    this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	    
-        this.frame.addKeyListener(new KeyListener() {
-          
-			//Cast cast = getCast();
-			//ArrayList<Sprite> spriteList = cast.getSprites();
-		
-			@Override
-            public void keyPressed(KeyEvent e) {
-			if (!isPaused)
-			{
-				
-                if(e.getKeyCode() == KeyEvent.VK_UP) {
-                    System.out.println("Up arrow pressed.");
-  
-                    //frog.setDirection(Orientation.LEFT);
-                    //Should call method to move forward
-                    Boolean roadCrossed;
-                    
-                    frog.update();
-                    
-                    
-                   roadCrossed = frog.crossedRoad();
-                   if (roadCrossed)
-                   {
-                	   score +=1;
-                	   resetFrog();
-                	   System.out.println(score);
-                	   scorePanel.setText("Current score: " + Integer.toString(score));
-                	   
-                	   int velocity = (score*2) ;
-                	   changeVelocity(velocity);
-
-                   }
-                    frame.requestFocus();
-                    frame.repaint();
-       
-                }
-                if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    System.out.println("Down arrow pressed.");
-                    frog.rotate180();
-                    frame.requestFocus();
-                    frame.repaint();
-        
-                    
-                }
-                if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    System.out.println("Left arrow pressed.");
-                    frog.rotateCounterClockwise();
-                    frame.requestFocus();
-                    frame.repaint();
-                }
-                if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    System.out.println("Right arrow pressed.");
-                    frog.rotateClockwise();
-                    frame.requestFocus();
-                    frame.repaint();
-                }
-			
-            }
-			}//End of is paused
-            @Override
-            public void keyReleased(KeyEvent e) {
-                System.out.println("Released key " + e.getKeyCode());
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                System.out.println("Typed key " + e.getKeyChar());
-            }
-			
-        });
-        
+	    this.implementKeyListeners();
+	        
 	}
 	
-	public void changeVelocity(int velocity)
-	{
-		Cast cast = getCast();
-		ArrayList<Sprite> spriteList = cast.getSprites();
-    	int castSize = spriteList.size();
-    	//Every Sprite except the last sprite, Frog 
-    	for (int i = 0; i < castSize-1; i++){
-    		Sprite sprite = spriteList.get(i);
-    		sprite.changeVelocity( velocity);
 
-    	}
-	}
-
-	/**
-	 * Method to determine whether frog is hit or not
-	 * Compares the x / y coordinates of the frog and all the cars
-	 */
-	public boolean isFrogSquished(Sprite sprite){	
-		boolean isFrogSquished = false;
-		
-		int spriteWidth = 20; // temporary
-		int spriteHeight = 10; // temporary
-		
-		int frogWidth = 10; // temporary
-		int frogHeight = 10; // temporary
-		
-		int spriteMinX = sprite.getX() - spriteWidth;
-		int spriteMaxX = sprite.getX() + spriteWidth;
-		
-		int spriteMinY = sprite.getY() - spriteHeight;
-		int spriteMaxY = sprite.getY() + spriteHeight;
-		
-		int frogMinX = this.frog.getX() - frogWidth;
-		int frogMaxX = this.frog.getX() + frogWidth;
-
-		int frogMinY = this.frog.getY() - frogHeight;
-		int frogMaxY = this.frog.getY() + frogHeight;
-		
-		if (	(frogMinX >= spriteMinX && frogMinX <= spriteMaxX) || // frog's left side is within car range
-			(frogMaxX >= spriteMinX && frogMaxX <= spriteMaxX)	) { // frog's right side within car range
-				 if (	(frogMinY >= spriteMinY && frogMinY <= spriteMaxY) || // frog's bottom side is within car range
-						(frogMaxY >= spriteMinY && frogMaxY <= spriteMaxY)	) { // frog's top side within car range
-				    		//	System.out.print("OUCH!");
-				    			isFrogSquished = true;
-				    			this.frog.Alive = false;
-				    			this.lives = lives - 1;
-				 }
-    	}
-    	return isFrogSquished;
-	}
 	
 	/**
 	 * Determines if the game has finished or not. Game finishes if this.lives = 0;
@@ -221,17 +105,123 @@ public class Frogger extends JFrame implements Runnable{
 		}
 		return this.isGameOver;
 	}
-		   
+	
+	
+	/***********
+	 * SPRITE RELATED METHODS
+	 * *********
+	 */
+	
+	/**
+	 * Method to add cars in the game
+	 * @param numberOfCars
+	 */
+	public void addCars(int numberOfCars){	
+		for (int i = 0; i < numberOfCars; i++){
+			this.cast.addSprites(this.createNewCar());			
+		}
+	}
+	
+	/**
+	 * Method to create a new Car object
+	 * @return a Car object
+	 */
+	public Car createNewCar(){
+		Car car = new Car();
+		car.view = this.view;
+		car.addObserver(view);
+		car.initialiseCar(this.carCount);
+		this.carCount = this.carCount + 1;
+		return car;
+	}
+	
+
+	/**
+	 * Method to create a new Frog object
+	 * @return a Frog object
+	 */
+	public Frog createNewFrog(){
+		Frog frog = new Frog();
+		frog.view = this.view;
+		frog.addObserver(view);
+		return frog;
+	}
+	
+	/**
+	 * Increase the velocity of cars when score increases
+	 * @param velocity
+	 */
+	public void changeVelocity(int velocity)
+	{
+		Cast cast = getCast();
+		ArrayList<Sprite> spriteList = cast.getSprites();
+    	int castSize = spriteList.size();
+    	//Every Sprite except the last sprite, Frog 
+    	for (int i = 0; i < castSize - 1; i++){
+    		Sprite sprite = spriteList.get(i);
+    		sprite.changeVelocity(velocity);
+    	}
+	}
+
+
+
+	/**
+	 * Method to determine whether frog is hit or not
+	 * Compares the x / y coordinates of the frog and all the cars
+	 */
+	public boolean isFrogSquished(Sprite sprite){	
+		boolean isFrogSquished = false;
+		
+		int spriteWidth = sprite.getImageWidth(); // temporary
+		int spriteHeight = sprite.getImageHeight(); // temporary
+		
+		int frogWidth = frog.getImageWidth(); // temporary
+		int frogHeight = frog.getImageHeight(); // temporary
+		
+		int spriteMinX = sprite.getX() - spriteWidth/2;
+		int spriteMaxX = sprite.getX() + spriteWidth/2;
+		
+		int spriteMinY = sprite.getY() - spriteHeight/2;
+		int spriteMaxY = sprite.getY() + spriteHeight/2;
+		
+		int frogMinX = this.frog.getX() - frogWidth/2;
+		int frogMaxX = this.frog.getX() + frogWidth/2;
+
+		int frogMinY = this.frog.getY() - frogHeight/2;
+		int frogMaxY = this.frog.getY() + frogHeight/2;
+		
+		if (	(frogMinX >= spriteMinX && frogMinX <= spriteMaxX) || // frog's left side is within car range
+			(frogMaxX <= spriteMinX && frogMaxX >= spriteMaxX)	) { // frog's right side within car range
+
+			if (	(frogMinY >= spriteMinY && frogMinY <= spriteMaxY) || // frog's bottom side is within car range
+						(frogMaxY <= spriteMinY && frogMaxY >= spriteMaxY)	) { // frog's top side within car range
+							System.out.println(frogMinY + "<--FMinY");
+							System.out.println(frogMaxY + "<--FMaxY");
+							System.out.println(frogMinX + "<--FMinX");
+							System.out.println(frogMaxX + "<--FMaxX");
+							System.out.println(spriteMinY + "<--SMinY");
+							System.out.println(spriteMaxY + "<--SMaxY");
+							System.out.println(spriteMinX + "<--SMinX");
+							System.out.println(spriteMaxX + "<--SMaxX");
+								isFrogSquished = true;
+				    			this.frog.alive = false;
+				    			this.lives = lives - 1;
+				 }
+    	}
+    	return isFrogSquished;
+	}
+	
+	/**
+	 * Resets the frog when it either crosses the road or gets crushed
+	 */
 	public void resetFrog()
 	{
-		this.cast.removeSprites(frog);
-		Frog frog = createNewFrog();
-		this.frog = frog;
-		this.cast.addSprites(frog);
+		this.cast.removeSprites(this.frog);
+		this.frog = createNewFrog();
+		this.cast.addSprites(this.frog);
 	}
 	
 	
-
 	/***********
 	 * COMPONENT CREATION METHODS
 	 * *********
@@ -297,12 +287,11 @@ public class Frogger extends JFrame implements Runnable{
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.BLACK);
 		
-		scorePanel = new JTextField();
-		scorePanel.setFont(new Font("San Serif", Font.BOLD, 15));
-		scorePanel.setText("Current score: " + Integer.toString(this.score));
-		scorePanel.setEditable(false);
-		this.scorePanel = scorePanel;
-		panel.add(scorePanel);
+		this.scorePanel = new JTextField();
+		this.scorePanel.setFont(new Font("San Serif", Font.BOLD, 15));
+		this.scorePanel.setText("Current score: " + Integer.toString(this.score));
+		this.scorePanel.setEditable(false);
+		panel.add(this.scorePanel);
 		return panel;
 	}
 	
@@ -314,58 +303,75 @@ public class Frogger extends JFrame implements Runnable{
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.BLACK);
 		
-		livesPanel = new JTextField();
-		livesPanel.setFont(new Font("San Serif", Font.BOLD, 15));
-		livesPanel.setText("Lives left: " + Integer.toString(this.lives));
-		livesPanel.setEditable(false);
-		this.livesPanel = livesPanel;
-		panel.add(livesPanel);
+		this.livesPanel = new JTextField();
+		this.livesPanel.setFont(new Font("San Serif", Font.BOLD, 15));
+		this.livesPanel.setText("Lives left: " + Integer.toString(this.lives));
+		this.livesPanel.setEditable(false);
+		panel.add(this.livesPanel);
 		return panel;
 	}
 	
 	
-	/**
-	 * Method to add cars in the game
-	 * @param numberOfCars
-	 */
-	public void addCars(int numberOfCars){	
-		for (int i = 0; i < numberOfCars; i++){
-			this.cast.addSprites(this.createNewCar());			
-		}
-	}
-	
 	/***********
-	 * SPRITE CREATION METHODS
+	 * KEY ACTION COMPONENTS
 	 * *********
 	 */
 	
 	/**
-	 * Method to create a new Car object
-	 * @return a Car object
+	 * Implements key listeners to record movement left / right / forward / backwards
 	 */
-	public Car createNewCar(){
-		Car car = new Car();
-		car.view = this.view;
-		car.addObserver(view);
-		car.initialiseCar(this.carCount);
-		this.carCount = this.carCount + 1;
-		return car;
-	}
-	
+	public void implementKeyListeners(){
+		 
+        this.frame.addKeyListener(new KeyListener() {	
+			@Override
+            public void keyPressed(KeyEvent e) {
+				if (!isPaused){
+					if(e.getKeyCode() == KeyEvent.VK_UP) {                 
+						frog.update();
+						Boolean roadCrossed = frog.crossedRoad();
+						if (roadCrossed){
+							score +=1;
+							resetFrog();
+							scorePanel.setText("Current score: " + Integer.toString(score));
+							int velocity = (score*2) ;
+							changeVelocity(velocity);
+						}
+						frame.requestFocus();
+						frame.repaint();
+					}
+					
+					if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+						frog.rotate180();
+						frame.requestFocus();
+						frame.repaint();                    
+					}
+            
+					if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+						frog.rotateCounterClockwise();
+						frame.requestFocus();
+						frame.repaint();
+					}
+           
+					if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+						frog.rotateClockwise();
+						frame.requestFocus();
+						frame.repaint();
+					}
+				}
+			}//End of isPaused
+			
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
 
-	/**
-	 * Method to create a new Frog object
-	 * @return a Frog object
-	 */
-	public Frog createNewFrog(){
-		Frog frog = new Frog();
-		frog.view = this.view;
-		frog.addObserver(view);
-		return frog;
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }	
+        });
 	}
 	
 	/***********
-	 * ADDING BUTTON ACTION COMPONENTS
+	 * BUTTON ACTION COMPONENTS
 	 * *********
 	 */
 	
@@ -408,40 +414,28 @@ public class Frogger extends JFrame implements Runnable{
 				Cast cast = getCast();
 				ArrayList<Sprite> spriteList = cast.getSprites();
 		    	int castSize = spriteList.size();
+		    	
 		    	//Every Sprite except the last sprite, Frog 
 		    	for (int i = 0; i < castSize-1; i++){
 		    		Sprite sprite = spriteList.get(i);
-		    	
 		    		sprite.update();
 
 			    	if (isFrogSquished(sprite)){
-			    	
-			    	 	
-			    		
 			    		livesPanel.setText("Lives left: " + Integer.toString(lives));
 			    		try {
 							frog.squishFrog();
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
-			    		
+						}			    		
 			    		resetFrog();
-			    		
-
 			    	}
-			    	
-
 		    	}
 
-			} else {
+			} else { // if game is over, simply repaint a "Game Over" background
 				frame.repaint();
 			}
-			
 		}
 	}
-	
-	
 	
 	
 	/***********

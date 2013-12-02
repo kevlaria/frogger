@@ -9,24 +9,22 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 
-
-
 public class Frog extends Sprite {
 
 	
 	private Image image;
 	protected View view;
-	boolean Alive;
+	boolean alive;
 	Orientation direction;
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
-	
-	//int maxY = 1000;
-//	int maxX = 1000;
 	
    private static final int minX = 300;
    private static final int maxX = 800;
    private static final int maxY = 0;
    private static final int minY = 0;
+   private static final int destinationY = 40;
+   private static final int waitTimeForNewFrog = 1000;
+   private static final int oneJump = 35;
 
 	/**
 	 * Constructor for frog
@@ -35,103 +33,90 @@ public class Frog extends Sprite {
 	{
 		this.image = loadImage("src/Images_for_Frogger/frog-up.png");
 		direction = Orientation.UP;
-		Alive = true;
-		this.x =350;
-		this.y =175;
+		alive = true;
+		this.x = 350;
+		this.y = 175;
 	}
 	
 
-
-
+	/**
+	 * Updates current position of the Frog
+	 */
 	@Override
 	void update() {
-		// TODO Auto-generated method stub
-		//this.image = loadImage("src/Images_for_Frogger/frog-right.png");
-		
-		
 		//Update the current position
-		dx=0;
-		dy=0;
-		moveForward();
-		x = x + dx;
-		y = y + dy;
-		//this.x += 100;
+		this.dx = 0;
+		this.dy = 0;
+		this.moveForward();
+		this.x = this.x + this.dx;
+		this.y = this.y + this.dy;
 		setChanged();
     	notifyObservers(); 
 	}
 
-	public void setDirection(Orientation position){
-		this.direction = position;
-	}
-	
-	
-	public Orientation getDirection()
-	{
-		return this.direction;
-	}
-	
 
-	
+	/***********
+	 * SPRITE MOVEMENT METHODS
+	 * *********
+	 */
 	
 	/**
 	 * Method Move Forward:
 	 * This gets the current orientation of the object.
 	 * When the user pushes the up button, this code is activated.
 	 * When this method is called, it will move the position of the frog 
-	 * + or - 1 depending on the current orientaiton of the frog.
+	 * + or - 1 depending on the current orientation of the frog.
 	 */
-	public void moveForward()
-	{
-		if (direction.toString() == "LEFT")
-		{
-			if ((x-35) > minX)
-			{
-			// OR UPDATE DX
-				dx = -35;
-			}
-			else
-			{
+	public void moveForward() {
+		if (direction.toString() == "LEFT") { // Establish leftmost bounds
+			if ((x - oneJump) > minX) {
+				dx = -oneJump;
+			} else {
 				System.out.println("Out of bounds");
-			}
-			
+			}	
 		}
-		else if (direction.toString() == "UP")
-		{
-			if ((y-35) > minY)
-			{
-				dy = -35;
-			}
-			else
-			{
-				System.out.println("Out of bounds");
-			}
-			
-		}
-		else if (direction.toString() == "DOWN")
-		{
-			if ((y+35) < maxY)
-			{
-				dy= +35;
-			}
-			else
-			{
+		else if (direction.toString() == "RIGHT") { // Establish rightmost bounds
+			if ((x + oneJump) < maxX)	{
+			 dx= +oneJump;
+			} else {
 				System.out.println("Out of bounds");
 			}
 		}
-		else if (direction.toString() == "RIGHT")
-		{
-			if ((x+35) < maxX)
-			{
-			 dx= +35;
-			}
-			else
-			{
+		else if (direction.toString() == "UP") { // Establish uppermost bounds
+			if ((y - oneJump) > minY) {
+				dy = -oneJump;
+			} else {
+				System.out.println("Out of bounds");
+			}	
+		}
+		else if (direction.toString() == "DOWN")  { // Establish lower-most bounds
+			if ((y + oneJump) < maxY) {
+				dy = +oneJump;
+			} else {
 				System.out.println("Out of bounds");
 			}
 		}
-		
 	}
 	
+	/**
+	 * Determines if frog has crossed road yet.
+	 * @return
+	 */
+	public boolean crossedRoad()
+	{
+		int currentY = this.y;
+		
+		if (currentY <= destinationY){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Changes image of frog to a squished frog, and waits a second before resuming 
+	 * @throws InterruptedException
+	 */
 	public void squishFrog() throws InterruptedException
 	{
 		this.image = loadImage("src/Images_for_Frogger/splat.gif");
@@ -139,9 +124,17 @@ public class Frog extends Sprite {
 		setChanged();
     	notifyObservers(); 
     	//Wait a second 
-    	Thread.currentThread().sleep(1000);
+    	Thread.currentThread().sleep(waitTimeForNewFrog);
 	}
+
+	/***********
+	 * SPRITE ROTATION METHODS
+	 * *********
+	 */
 	
+	/**
+	 * Rotates frog clockwise
+	 */
 	public void rotateClockwise()
 	{
 		if (direction.toString() == "LEFT")
@@ -167,29 +160,11 @@ public class Frog extends Sprite {
 		}
 		
 	}
+
 	
-	
-	public boolean crossedRoad()
-	{
-		//Gets The "Current locaiton of the frog"
-		int currentY = this.y;
-		//Check to see if the Y = -100 
-		
-		if (currentY <= 50)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-		
-		// If so Reset the frog
-		// score + 1
-		
-		
-	}
-	
+	/**
+	 * Rotates frog counter clockwise
+	 */
 	public void rotateCounterClockwise()
 	{
 		if (direction.toString() == "LEFT")
@@ -216,7 +191,9 @@ public class Frog extends Sprite {
 		
 	}
 	
-	
+	/**
+	 * Rotates frog by 180 degrees
+	 */
 	public void rotate180()
 	{
 		if (direction.toString() == "LEFT")
@@ -242,47 +219,47 @@ public class Frog extends Sprite {
 		}
 		
 	}
+	
+	/***********
+	 * SPRITE DRAWING METHODS
+	 * *********
+	 */
+	
+	@Override
+	void draw(Graphics g) {		
+		g.drawImage(this.image, this.x, this.y, this.view);	
+	}
+
+	
 	/**
 	 * Loads the correct image based on the direction
-	 * 
+	 * @param direction = direction based on key pressed
 	 */
 	public void reloadImage(Orientation direction) {
 				
 		// TODO Draw the position based on the position passed in
-		if (direction == Orientation.LEFT)
-		{
-			
+		if (direction == Orientation.LEFT) {			
 			this.image = loadImage("src/Images_for_Frogger/frog-left.png");
 			setChanged();
 	    	notifyObservers(); 
-	    
-
 		}
-		else if (direction == Orientation.UP)
-		{
+		else if (direction == Orientation.UP) {
 			this.image = loadImage("src/Images_for_Frogger/frog-up.png");
 			setChanged();
 	    	notifyObservers(); 	
 		}
-		else if (direction == Orientation.DOWN)
-		{
+		else if (direction == Orientation.DOWN) {
 			this.image = loadImage("src/Images_for_Frogger/frog-down.png");
 			setChanged();
 	    	notifyObservers(); 
 		}
-		else if (direction == Orientation.RIGHT)
-		{
+		else if (direction == Orientation.RIGHT) {
 			this.image = loadImage("src/Images_for_Frogger/frog-right.png");
 			setChanged();
 	    	notifyObservers(); 
 		}	
-	
 	}
 		
-	
-	
-	
-///////////////////////////
 
     /**
      * Method to load image
@@ -301,52 +278,54 @@ public class Frog extends Sprite {
             
     }
     
-
-
-	@Override
-	String getSpriteType() {
-		// TODO Auto-generated method stub
-		return "Frog";
+	/***********
+	 * SPRITE DIRECTION METHODS
+	 * *********
+	 */
+	
+	public void setDirection(Orientation position){
+		this.direction = position;
+	}
+	
+	public Orientation getDirection() {
+		return this.direction;
 	}
 
-
-
-	@Override
-	Image getImage() {
-		// TODO Auto-generated method stub
-		return this.image;
-	}
-
-
+	/***********
+	 * GETTER METHODS
+	 * *********
+	 */
+    
 	@Override
 	int getX() {
 		// TODO Auto-generated method stub
 		return this.x;
 	}
 
-
 	@Override
 	int getY() {
-		// TODO Auto-generated method stub
 		return this.y;
 	}
 
 
-
-
-
 	@Override
-	void draw(Graphics g) {
-		
-		g.drawImage(this.image, x, y, this.view);	
-		
+	void changeVelocity(int newVelocity) {	
 	}
 
 
 
+
 	@Override
-	void changeVelocity(int newVelocity) {
-		
+	int getImageWidth() {
+		return this.image.getWidth(view);
+	}
+
+
+
+
+	@Override
+	int getImageHeight() {
+		return this.image.getHeight(view);
 	}
 
 	

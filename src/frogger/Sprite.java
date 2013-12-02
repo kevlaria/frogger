@@ -7,7 +7,6 @@ import java.util.Observable;
 public abstract class Sprite extends Observable{
 
 	int x, y; 
-	
 	int dx,  dy;
 	
 	/**
@@ -20,24 +19,23 @@ public abstract class Sprite extends Observable{
 	 * @param g
 	 */
 	abstract void draw(Graphics g);
-	
+
 	/**
-	 * Method to identify type of Sprite object is
-	 * TODO - determine whether we still need this
-	 * @return
+	 * Changes the velocity of each sprite
+	 * @param newVelocity
 	 */
-	abstract String getSpriteType();
+	abstract void changeVelocity(int newVelocity);
+
 	
 	/***********
 	 * GETTER AND SETTER METHODS
-	 * TODO - determine whether we still need these
 	 * *********
 	 */
 	
-	abstract Image getImage();
 	abstract int getX();
 	abstract int getY();
+	abstract int getImageWidth();
+	abstract int getImageHeight();
 
-	abstract void changeVelocity(int newVelocity);
 	
 }
