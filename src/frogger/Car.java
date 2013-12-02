@@ -123,11 +123,24 @@ public class Car extends Sprite{
     	}	
     }
     
+    
+    public void changeVelocity(int newVelocity)
+    {
+    	if (this.facingRight)
+    	{
+    	this.dx += newVelocity;
+    	}
+    	else
+    	{
+    	this.dx -= newVelocity;
+    	}
+    }
+    
     /**
      * Method to move car
      */
     @Override
-    void update() {
+    void update( ) {
     	
     	int xLimit = view.getWidth();
     	int carLength = image.getWidth(view);
@@ -206,6 +219,8 @@ public class Car extends Sprite{
 	int getY() {
 		return y;
 	}
+
+
 
 
 

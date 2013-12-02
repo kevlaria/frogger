@@ -37,4 +37,7 @@ public abstract class Sprite extends Observable{
 	abstract Image getImage();
 	abstract int getX();
 	abstract int getY();
+
+	abstract void changeVelocity(int newVelocity);
+	
 }

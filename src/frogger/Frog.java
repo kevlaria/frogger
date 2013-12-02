@@ -20,11 +20,13 @@ public class Frog extends Sprite {
 	Orientation direction;
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
 	
-	int maxY = 1000;
-	int maxX = 1000;
+	//int maxY = 1000;
+//	int maxX = 1000;
 	
-  //  private static final int leftMostXCoordinate = -50;
-   // private static final int rightMostXCoordinate = 700;
+   private static final int minX = 300;
+   private static final int maxX = 800;
+   private static final int maxY = 0;
+   private static final int minY = 0;
 
 	/**
 	 * Constructor for frog
@@ -34,8 +36,8 @@ public class Frog extends Sprite {
 		this.image = loadImage("src/Images_for_Frogger/frog-up.png");
 		direction = Orientation.UP;
 		Alive = true;
-		this.x =200;
-		this.y =200;
+		this.x =350;
+		this.y =175;
 	}
 	
 
@@ -82,39 +84,64 @@ public class Frog extends Sprite {
 	{
 		if (direction.toString() == "LEFT")
 		{
-			if ((x-1) >= -1000)
+			if ((x-35) > minX)
 			{
 			// OR UPDATE DX
-				dx = -10;
+				dx = -35;
+			}
+			else
+			{
+				System.out.println("Out of bounds");
 			}
 			
 		}
 		else if (direction.toString() == "UP")
 		{
-			//if ((y+1) >= maxY)
-			//{
-				dy = -10;
-	//		}
+			if ((y-35) > minY)
+			{
+				dy = -35;
+			}
+			else
+			{
+				System.out.println("Out of bounds");
+			}
 			
 		}
 		else if (direction.toString() == "DOWN")
 		{
-			//if ((y+1) <= -1000)
-			//{
-				dy= +10;
-			//}
+			if ((y+35) < maxY)
+			{
+				dy= +35;
+			}
+			else
+			{
+				System.out.println("Out of bounds");
+			}
 		}
 		else if (direction.toString() == "RIGHT")
 		{
-			if ((x+1) <= maxX)
+			if ((x+35) < maxX)
 			{
-			 dx= +10;
+			 dx= +35;
+			}
+			else
+			{
+				System.out.println("Out of bounds");
 			}
 		}
 		
 	}
 	
-	   
+	public void squishFrog() throws InterruptedException
+	{
+		this.image = loadImage("src/Images_for_Frogger/splat.gif");
+		
+		setChanged();
+    	notifyObservers(); 
+    	//Wait a second 
+    	Thread.currentThread().sleep(1000);
+	}
+	
 	public void rotateClockwise()
 	{
 		if (direction.toString() == "LEFT")
@@ -142,6 +169,26 @@ public class Frog extends Sprite {
 	}
 	
 	
+	public boolean crossedRoad()
+	{
+		//Gets The "Current locaiton of the frog"
+		int currentY = this.y;
+		//Check to see if the Y = -100 
+		
+		if (currentY <= 50)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
+		// If so Reset the frog
+		// score + 1
+		
+		
+	}
 	
 	public void rotateCounterClockwise()
 	{
@@ -232,6 +279,9 @@ public class Frog extends Sprite {
 	
 	}
 		
+	
+	
+	
 ///////////////////////////
 
     /**
@@ -292,4 +342,12 @@ public class Frog extends Sprite {
 		
 	}
 
+
+
+	@Override
+	void changeVelocity(int newVelocity) {
+		
+	}
+
+	
 }

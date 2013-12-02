@@ -24,6 +24,7 @@ public class Frogger extends JFrame implements Runnable{
 	Cast cast;
 	View view;
 	JFrame frame;
+	boolean isPaused;
 	private Background background;
 	private Timer timer;
 	private JButton goButton;
@@ -31,11 +32,11 @@ public class Frogger extends JFrame implements Runnable{
 	private JPanel buttonPanel;
 	private int carCount;
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
-
+	
 	protected Frog frog;
-	private JTextField scorePanel;
-	private int score;
-	private JTextField livesPanel;
+	JTextField scorePanel;
+	 int score;
+	JTextField livesPanel;
 	private int lives;
 	boolean isGameOver;
 
@@ -68,7 +69,7 @@ public class Frogger extends JFrame implements Runnable{
 		background.view = this.view;
 		
 		this.addCars(10);
-	
+		isPaused = true;
 		
 		//Add Frog
 		this.frog = this.createNewFrog();
@@ -91,12 +92,31 @@ public class Frogger extends JFrame implements Runnable{
 		
 			@Override
             public void keyPressed(KeyEvent e) {
+			if (!isPaused)
+			{
+				
                 if(e.getKeyCode() == KeyEvent.VK_UP) {
                     System.out.println("Up arrow pressed.");
   
                     //frog.setDirection(Orientation.LEFT);
                     //Should call method to move forward
+                    Boolean roadCrossed;
+                    
                     frog.update();
+                    
+                    
+                   roadCrossed = frog.crossedRoad();
+                   if (roadCrossed)
+                   {
+                	   score +=1;
+                	   resetFrog();
+                	   System.out.println(score);
+                	   scorePanel.setText("Current score: " + Integer.toString(score));
+                	   
+                	   int velocity = (score*2) ;
+                	   changeVelocity(velocity);
+
+                   }
                     frame.requestFocus();
                     frame.repaint();
        
@@ -121,8 +141,9 @@ public class Frogger extends JFrame implements Runnable{
                     frame.requestFocus();
                     frame.repaint();
                 }
+			
             }
-
+			}//End of is paused
             @Override
             public void keyReleased(KeyEvent e) {
                 System.out.println("Released key " + e.getKeyCode());
@@ -132,9 +153,24 @@ public class Frogger extends JFrame implements Runnable{
             public void keyTyped(KeyEvent e) {
                 System.out.println("Typed key " + e.getKeyChar());
             }
+			
         });
+        
 	}
 	
+	public void changeVelocity(int velocity)
+	{
+		Cast cast = getCast();
+		ArrayList<Sprite> spriteList = cast.getSprites();
+    	int castSize = spriteList.size();
+    	//Every Sprite except the last sprite, Frog 
+    	for (int i = 0; i < castSize-1; i++){
+    		Sprite sprite = spriteList.get(i);
+    		sprite.changeVelocity( velocity);
+
+    	}
+	}
+
 	/**
 	 * Method to determine whether frog is hit or not
 	 * Compares the x / y coordinates of the frog and all the cars
@@ -164,7 +200,7 @@ public class Frogger extends JFrame implements Runnable{
 			(frogMaxX >= spriteMinX && frogMaxX <= spriteMaxX)	) { // frog's right side within car range
 				 if (	(frogMinY >= spriteMinY && frogMinY <= spriteMaxY) || // frog's bottom side is within car range
 						(frogMaxY >= spriteMinY && frogMaxY <= spriteMaxY)	) { // frog's top side within car range
-				    			System.out.print("OUCH!");
+				    		//	System.out.print("OUCH!");
 				    			isFrogSquished = true;
 				    			this.frog.Alive = false;
 				    			this.lives = lives - 1;
@@ -186,6 +222,15 @@ public class Frogger extends JFrame implements Runnable{
 		return this.isGameOver;
 	}
 		   
+	public void resetFrog()
+	{
+		this.cast.removeSprites(frog);
+		Frog frog = createNewFrog();
+		this.frog = frog;
+		this.cast.addSprites(frog);
+	}
+	
+	
 
 	/***********
 	 * COMPONENT CREATION METHODS
@@ -256,6 +301,7 @@ public class Frogger extends JFrame implements Runnable{
 		scorePanel.setFont(new Font("San Serif", Font.BOLD, 15));
 		scorePanel.setText("Current score: " + Integer.toString(this.score));
 		scorePanel.setEditable(false);
+		this.scorePanel = scorePanel;
 		panel.add(scorePanel);
 		return panel;
 	}
@@ -272,6 +318,7 @@ public class Frogger extends JFrame implements Runnable{
 		livesPanel.setFont(new Font("San Serif", Font.BOLD, 15));
 		livesPanel.setText("Lives left: " + Integer.toString(this.lives));
 		livesPanel.setEditable(false);
+		this.livesPanel = livesPanel;
 		panel.add(livesPanel);
 		return panel;
 	}
@@ -334,6 +381,7 @@ public class Frogger extends JFrame implements Runnable{
 				pauseButton.setEnabled(true);
 				timer = new Timer(true);
 				timer.schedule(new Move(), 0, 50); // task, delay, duration (milliseconds)
+				isPaused = false;
 			}
 		});
 		
@@ -342,6 +390,7 @@ public class Frogger extends JFrame implements Runnable{
 				pauseButton.setEnabled(false);
 				goButton.setEnabled(true);
 				timer.cancel();
+				isPaused = true;
 			}		
 		});
 	}
@@ -354,6 +403,7 @@ public class Frogger extends JFrame implements Runnable{
 	private class Move extends TimerTask {
 		public void run(){
 			
+			
 			if(!isGameOver()){	 // Only run if the game is not yet over			
 				Cast cast = getCast();
 				ArrayList<Sprite> spriteList = cast.getSprites();
@@ -361,10 +411,27 @@ public class Frogger extends JFrame implements Runnable{
 		    	//Every Sprite except the last sprite, Frog 
 		    	for (int i = 0; i < castSize-1; i++){
 		    		Sprite sprite = spriteList.get(i);
+		    	
 		    		sprite.update();
+
 			    	if (isFrogSquished(sprite)){
-			    		lives = lives - 1;
+			    	
+			    	 	
+			    		
+			    		livesPanel.setText("Lives left: " + Integer.toString(lives));
+			    		try {
+							frog.squishFrog();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			    		
+			    		resetFrog();
+			    		
+
 			    	}
+			    	
+
 		    	}
 
 			} else {
@@ -373,6 +440,8 @@ public class Frogger extends JFrame implements Runnable{
 			
 		}
 	}
+	
+	
 	
 	
 	/***********
