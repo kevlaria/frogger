@@ -35,12 +35,12 @@ public class Car extends Sprite{
 
     	if (this.facingRight){
             this.image = loadImage(imagePath);
-        	this.y = 65;    	// NB - starting x-coordinate created in this.createCarSpecs
+        	this.y = 130;    	// NB - starting x-coordinate created in this.createCarSpecs
         	this.dx = this.velocity; 		// starting velocity
 
     	} else {
             this.image = loadImage(imagePath);
-        	this.y = 130;    	// NB - starting x-coordinate created in this.createCarSpecs
+        	this.y = 65;    	// NB - starting x-coordinate created in this.createCarSpecs
         	this.dx = -this.velocity; 		// starting velocity   			
     	}	    	
     }
@@ -200,7 +200,7 @@ public class Car extends Sprite{
 
 	@Override
 	int getY() {
-		return y;
+		return this.y;
 	}
 
 	@Override

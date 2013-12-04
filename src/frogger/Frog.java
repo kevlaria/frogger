@@ -18,13 +18,13 @@ public class Frog extends Sprite {
 	Orientation direction;
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
 	
-   private static final int minX = 300;
+   private static final int minX = 0;
    private static final int maxX = 800;
-   private static final int maxY = 0;
+   private static final int maxY = 300;
    private static final int minY = 0;
-   private static final int destinationY = 40;
+   private static final int destinationY = 30;
    private static final int waitTimeForNewFrog = 1000;
-   private static final int oneJump = 35;
+   private static final int oneJump = 30;
 
 	/**
 	 * Constructor for frog
@@ -35,7 +35,7 @@ public class Frog extends Sprite {
 		direction = Orientation.UP;
 		alive = true;
 		this.x = 350;
-		this.y = 175;
+		this.y = 180; // 175;
 	}
 	
 
@@ -69,28 +69,28 @@ public class Frog extends Sprite {
 	 */
 	public void moveForward() {
 		if (direction.toString() == "LEFT") { // Establish leftmost bounds
-			if ((x - oneJump) > minX) {
+			if ((x - oneJump) >=	 minX) {
 				dx = -oneJump;
 			} else {
 				System.out.println("Out of bounds");
 			}	
 		}
 		else if (direction.toString() == "RIGHT") { // Establish rightmost bounds
-			if ((x + oneJump) < maxX)	{
+			if ((x + oneJump) <= maxX)	{
 			 dx= +oneJump;
 			} else {
 				System.out.println("Out of bounds");
 			}
 		}
 		else if (direction.toString() == "UP") { // Establish uppermost bounds
-			if ((y - oneJump) > minY) {
+			if ((y - oneJump) >= minY) {
 				dy = -oneJump;
 			} else {
 				System.out.println("Out of bounds");
 			}	
 		}
 		else if (direction.toString() == "DOWN")  { // Establish lower-most bounds
-			if ((y + oneJump) < maxY) {
+			if ((y + oneJump) <= maxY) {
 				dy = +oneJump;
 			} else {
 				System.out.println("Out of bounds");
@@ -100,7 +100,7 @@ public class Frog extends Sprite {
 	
 	/**
 	 * Determines if frog has crossed road yet.
-	 * @return
+	 * @return true if frog has crossed road
 	 */
 	public boolean crossedRoad()
 	{
@@ -298,7 +298,6 @@ public class Frog extends Sprite {
     
 	@Override
 	int getX() {
-		// TODO Auto-generated method stub
 		return this.x;
 	}
 
@@ -309,7 +308,8 @@ public class Frog extends Sprite {
 
 
 	@Override
-	void changeVelocity(int newVelocity) {	
+	void changeVelocity(int newVelocity) {
+		//Not applicable for Frog object
 	}
 
 

@@ -172,37 +172,29 @@ public class Frogger extends JFrame implements Runnable{
 	public boolean isFrogSquished(Sprite sprite){	
 		boolean isFrogSquished = false;
 		
-		int spriteWidth = sprite.getImageWidth(); // temporary
-		int spriteHeight = sprite.getImageHeight(); // temporary
+		int spriteWidth = sprite.getImageWidth();
+		int spriteHeight = sprite.getImageHeight(); 
 		
-		int frogWidth = frog.getImageWidth(); // temporary
-		int frogHeight = frog.getImageHeight(); // temporary
+		int frogWidth = frog.getImageWidth() - 6; // a small offset to adjust for the whitespace borders of the image
+		int frogHeight = frog.getImageHeight(); 
 		
-		int spriteMinX = sprite.getX() - spriteWidth/2;
-		int spriteMaxX = sprite.getX() + spriteWidth/2;
+		int spriteMinX = sprite.getX();
+		int spriteMaxX = sprite.getX() + spriteWidth;
 		
-		int spriteMinY = sprite.getY() - spriteHeight/2;
-		int spriteMaxY = sprite.getY() + spriteHeight/2;
+		int spriteMinY = sprite.getY();
+		int spriteMaxY = sprite.getY() + spriteHeight;
 		
-		int frogMinX = this.frog.getX() - frogWidth/2;
-		int frogMaxX = this.frog.getX() + frogWidth/2;
+		int frogMinX = this.frog.getX();
+		int frogMaxX = this.frog.getX() + frogWidth;
 
-		int frogMinY = this.frog.getY() - frogHeight/2;
-		int frogMaxY = this.frog.getY() + frogHeight/2;
+		int frogMinY = this.frog.getY();
+		int frogMaxY = this.frog.getY() + frogHeight;
 		
-		if (	(frogMinX >= spriteMinX && frogMinX <= spriteMaxX) || // frog's left side is within car range
-			(frogMaxX <= spriteMinX && frogMaxX >= spriteMaxX)	) { // frog's right side within car range
+		if (	(frogMinX > spriteMinX && frogMinX < spriteMaxX) || // frog's left side is within car range
+			(frogMaxX > spriteMinX && frogMaxX < spriteMaxX)	) { // frog's right side within car range
 
-			if (	(frogMinY >= spriteMinY && frogMinY <= spriteMaxY) || // frog's bottom side is within car range
-						(frogMaxY <= spriteMinY && frogMaxY >= spriteMaxY)	) { // frog's top side within car range
-							System.out.println(frogMinY + "<--FMinY");
-							System.out.println(frogMaxY + "<--FMaxY");
-							System.out.println(frogMinX + "<--FMinX");
-							System.out.println(frogMaxX + "<--FMaxX");
-							System.out.println(spriteMinY + "<--SMinY");
-							System.out.println(spriteMaxY + "<--SMaxY");
-							System.out.println(spriteMinX + "<--SMinX");
-							System.out.println(spriteMaxX + "<--SMaxX");
+			if (	(frogMinY > spriteMinY && frogMinY < spriteMaxY) || // frog's bottom side is within car range
+						(frogMaxY > spriteMinY && frogMaxY < spriteMaxY)	) { // frog's top side within car range
 								isFrogSquished = true;
 				    			this.frog.alive = false;
 				    			this.lives = lives - 1;
