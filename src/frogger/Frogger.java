@@ -32,15 +32,20 @@ public class Frogger extends JFrame implements Runnable{
 	protected Frog frog;
 	public enum Orientation { UP, RIGHT, DOWN, LEFT };
 	private int carCount;
+	private int carVelocity;
 	
 	private JTextField scorePanel;
-	int score;
+	private int score;
 	private JTextField livesPanel;
 	private int lives;
-	boolean isGameOver;
-	boolean isPaused;
+	private int level;
+	private boolean isGameOver;
+	private boolean isPaused;
 	private Timer timer;
-
+	private boolean needToAddCar;
+	
+	private static final int levelUpFactor = 2;
+	private final int numberOfCarsToStart = 6;
 	
 	/**
 	 * Launch the application.
@@ -52,8 +57,11 @@ public class Frogger extends JFrame implements Runnable{
 		this.carCount = 0;
 		this.score = 0;
 		this.lives = 3;
+		this.level = 0;
 		this.isGameOver = false;		
 		this.isPaused = true;
+		this.needToAddCar = false;
+		this.carVelocity = 7;
 	}
 	
 	public static void main(String[] args) {
@@ -72,7 +80,7 @@ public class Frogger extends JFrame implements Runnable{
 		this.background.view = this.view;
 		
 		
-		this.addCars(10);
+		this.addCars(numberOfCarsToStart);
 		//Add Frog
 		this.frog = this.createNewFrog();
 		this.cast.addSprites(frog);
@@ -102,6 +110,7 @@ public class Frogger extends JFrame implements Runnable{
 		if (this.lives <= 0){
 			this.isGameOver = true;
 			background.setIsGameOver(true);
+			this.frog.alive = false;
 		}
 		return this.isGameOver;
 	}
@@ -128,9 +137,11 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	public Car createNewCar(){
 		Car car = new Car();
-		car.view = this.view;
-		car.addObserver(view);
+		car.setView(this.view);
+		car.addObserver(this.view);
+		car.setStartingNumberOfCars(this.numberOfCarsToStart);
 		car.initialiseCar(this.carCount);
+		car.setDX(this.carVelocity);
 		this.carCount = this.carCount + 1;
 		return car;
 	}
@@ -147,6 +158,34 @@ public class Frogger extends JFrame implements Runnable{
 		return frog;
 	}
 	
+	/***********
+	 * LEVEL CHANGING RELATED METHODS
+	 * *********
+	 */
+	
+	/**
+	 * Method increases the level (and the car density and velocity of cars) once score reaches a certain level)
+	 */
+	public void levelUpCheck(){
+		int newLevel = this.score / levelUpFactor;
+		
+		if (newLevel > this.level){
+			this.level = newLevel;
+			this.carVelocity += 2;
+			changeVelocity(this.carVelocity);
+			this.needToAddCar = true;
+
+		}	
+		
+		if (this.needToAddCar){
+			if (this.okToAddCar()){
+				this.addCars(1);
+				this.needToAddCar = false;
+			}
+		}
+		
+	}
+	
 	/**
 	 * Increase the velocity of cars when score increases
 	 * @param velocity
@@ -156,13 +195,38 @@ public class Frogger extends JFrame implements Runnable{
 		Cast cast = getCast();
 		ArrayList<Sprite> spriteList = cast.getSprites();
     	int castSize = spriteList.size();
-    	//Every Sprite except the last sprite, Frog 
-    	for (int i = 0; i < castSize - 1; i++){
+    	for (int i = 0; i < castSize; i++){
     		Sprite sprite = spriteList.get(i);
-    		sprite.changeVelocity(velocity);
+    		sprite.setDX(velocity);
     	}
 	}
 
+	public boolean okToAddCar(){
+		int leftMostXCoordinate = 110;
+		int rightMostXCoordinate = 585;
+		int upperLaneYCoordinate = 65;
+		int lowerLaneYCoordinate = 130;
+		
+		ArrayList<Sprite> spriteList = cast.getSprites();
+    	int castSize = spriteList.size();
+    	
+    	for (int i = 0; i < castSize; i++){
+    		Sprite sprite = spriteList.get(i);
+    		if(sprite.getType().equals("Car")){ 	//Only concerned if it's a car
+    			if ((this.carCount + 1) % 2 == 0){ 		// if the next carCount is an even number, car start from the right
+        			if (sprite.getX() > rightMostXCoordinate && (sprite.getY() == upperLaneYCoordinate)){
+        				return false;
+        			}
+    			}  else {    // if the next carCount is an odd number, car will start from the left
+        			if (sprite.getX() - 40 < leftMostXCoordinate && (sprite.getY() == lowerLaneYCoordinate)){
+            			return false;
+        			}
+    			}
+    		}
+    	}
+    	
+    	return true;
+	}
 
 
 	/**
@@ -281,7 +345,7 @@ public class Frogger extends JFrame implements Runnable{
 		
 		this.scorePanel = new JTextField();
 		this.scorePanel.setFont(new Font("San Serif", Font.BOLD, 15));
-		this.scorePanel.setText("Current score: " + Integer.toString(this.score));
+		this.scorePanel.setText("Current score: " + Integer.toString(this.score)  + "  ");
 		this.scorePanel.setEditable(false);
 		panel.add(this.scorePanel);
 		return panel;
@@ -317,7 +381,7 @@ public class Frogger extends JFrame implements Runnable{
         this.frame.addKeyListener(new KeyListener() {	
 			@Override
             public void keyPressed(KeyEvent e) {
-				if (!isPaused){
+				if (!isPaused && frog.alive){
 					if(e.getKeyCode() == KeyEvent.VK_UP) {                 
 						frog.update();
 						Boolean roadCrossed = frog.crossedRoad();
@@ -325,8 +389,6 @@ public class Frogger extends JFrame implements Runnable{
 							score +=1;
 							resetFrog();
 							scorePanel.setText("Current score: " + Integer.toString(score));
-							int velocity = (score*2) ;
-							changeVelocity(velocity);
 						}
 						frame.requestFocus();
 						frame.repaint();
@@ -407,21 +469,25 @@ public class Frogger extends JFrame implements Runnable{
 				ArrayList<Sprite> spriteList = cast.getSprites();
 		    	int castSize = spriteList.size();
 		    	
-		    	//Every Sprite except the last sprite, Frog 
-		    	for (int i = 0; i < castSize-1; i++){
+		    	for (int i = 0; i < castSize; i++){
 		    		Sprite sprite = spriteList.get(i);
-		    		sprite.update();
+		    		if(sprite.getType().equals("Car")){ 	//Only redraw if the Sprite is a Car
+			    		sprite.update();
 
-			    	if (isFrogSquished(sprite)){
-			    		livesPanel.setText("Lives left: " + Integer.toString(lives));
-			    		try {
-							frog.squishFrog();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}			    		
-			    		resetFrog();
-			    	}
+				    	if (isFrogSquished(sprite)){
+				    		livesPanel.setText("Lives left: " + Integer.toString(lives));
+				    		try {
+								frog.squishFrog();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}			    		
+				    		resetFrog();
+				    	}
+		    			
+		    		}
 		    	}
+				levelUpCheck();
+
 
 			} else { // if game is over, simply repaint a "Game Over" background
 				frame.repaint();

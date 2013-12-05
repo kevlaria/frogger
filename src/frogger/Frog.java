@@ -20,7 +20,7 @@ public class Frog extends Sprite {
 	
    private static final int minX = 0;
    private static final int maxX = 800;
-   private static final int maxY = 300;
+   private static final int maxY = 200;
    private static final int minY = 0;
    private static final int destinationY = 30;
    private static final int waitTimeForNewFrog = 1000;
@@ -71,29 +71,21 @@ public class Frog extends Sprite {
 		if (direction.toString() == "LEFT") { // Establish leftmost bounds
 			if ((x - oneJump) >=	 minX) {
 				dx = -oneJump;
-			} else {
-				System.out.println("Out of bounds");
-			}	
+			} 
 		}
 		else if (direction.toString() == "RIGHT") { // Establish rightmost bounds
 			if ((x + oneJump) <= maxX)	{
 			 dx= +oneJump;
-			} else {
-				System.out.println("Out of bounds");
-			}
+			} 
 		}
 		else if (direction.toString() == "UP") { // Establish uppermost bounds
 			if ((y - oneJump) >= minY) {
 				dy = -oneJump;
-			} else {
-				System.out.println("Out of bounds");
-			}	
+			} 	
 		}
 		else if (direction.toString() == "DOWN")  { // Establish lower-most bounds
 			if ((y + oneJump) <= maxY) {
 				dy = +oneJump;
-			} else {
-				System.out.println("Out of bounds");
 			}
 		}
 	}
@@ -308,7 +300,7 @@ public class Frog extends Sprite {
 
 
 	@Override
-	void changeVelocity(int newVelocity) {
+	void setDX(int newVelocity) {
 		//Not applicable for Frog object
 	}
 
@@ -326,6 +318,11 @@ public class Frog extends Sprite {
 	@Override
 	int getImageHeight() {
 		return this.image.getHeight(view);
+	}
+	
+	@Override
+	public String getType(){
+		return "Frog";
 	}
 
 	

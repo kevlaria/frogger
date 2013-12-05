@@ -14,16 +14,19 @@ import javax.swing.JFrame;
 public class Car extends Sprite{
 
     private Image image;
-    protected View view; // this is assigned by the Frogger class
+    private View view; // this is assigned by the Frogger class
+    private int startingNumberOfCars; // this is assigned by the Frogger class
     boolean facingRight;
-    private int velocity;
+
+	private static final int upperLaneYCoordinate = 65;
+	private static final int lowerLaneYCoordinate = 130;
+
     
-    private static final int leftMostXCoordinate = -50;
-    private static final int rightMostXCoordinate = 700;
+    private static final int leftMostXCoordinate = -10;
+    private static final int rightMostXCoordinate = 750;
     
     public Car(){
-    	this.velocity = 5;
-    	this.dy = 0; 
+    	this.dy = 0;
     };
     
     /**
@@ -35,13 +38,11 @@ public class Car extends Sprite{
 
     	if (this.facingRight){
             this.image = loadImage(imagePath);
-        	this.y = 130;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = this.velocity; 		// starting velocity
+        	this.y = lowerLaneYCoordinate;    	// NB - starting x-coordinate created in this.createCarSpecs
 
     	} else {
             this.image = loadImage(imagePath);
-        	this.y = 65;    	// NB - starting x-coordinate created in this.createCarSpecs
-        	this.dx = -this.velocity; 		// starting velocity   			
+        	this.y = upperLaneYCoordinate;    	// NB - starting x-coordinate created in this.createCarSpecs
     	}	    	
     }
    
@@ -57,7 +58,7 @@ public class Car extends Sprite{
     	} else {
     		this.facingRight = false;
     	}
-    	int colourChoice = random.nextInt(4);
+    	int colourChoice = random.nextInt(5);
     	this.setStartingX(carCount);
     	String imagePath = this.generateCarImage(colourChoice);
     	return imagePath;
@@ -69,13 +70,24 @@ public class Car extends Sprite{
      */
     public void setStartingX(int carCount){
     	
-    	Random random = new Random();
-    	int carDensity = 100 + random.nextInt(10);
+    	if (carCount < this.startingNumberOfCars){
+        	Random random = new Random();
+        	int carDensity = 150 + random.nextInt(20);
+        	
+        	if(this.facingRight){
+        		this.x = leftMostXCoordinate + (carDensity * carCount);
+        	} else {
+           		this.x = rightMostXCoordinate - (carDensity * (carCount - 1));   		
+        	}    		
+    	}
     	
-    	if(this.facingRight){
-    		this.x = leftMostXCoordinate + (carDensity * carCount);
-    	} else {
-       		this.x = rightMostXCoordinate - (carDensity * (carCount - 1));   		
+    	else {
+        	if(this.facingRight){
+        		this.x = leftMostXCoordinate;
+        	} else {
+           		this.x = rightMostXCoordinate;   		
+        	}    		
+    		
     	}
     	
     }
@@ -100,8 +112,11 @@ public class Car extends Sprite{
     		case 2:
     			imagePath = "src/Images_for_Frogger/green-car-right.png";
     			return imagePath;
-    		default:
+    		case 3:
     			imagePath = "src/Images_for_Frogger/white-car-right.png";
+    			return imagePath;
+    		default:
+    			imagePath = "src/Images_for_Frogger/yellow-car-right.png";
     			return imagePath;
     		}
     	} else {
@@ -115,25 +130,18 @@ public class Car extends Sprite{
     		case 2:
     			imagePath = "src/Images_for_Frogger/green-car-left.png";
     			return imagePath;
-    		default:
+    		case 3:
     			imagePath = "src/Images_for_Frogger/white-car-left.png";
+    			return imagePath;
+    		default:
+    			imagePath = "src/Images_for_Frogger/yellow-car-left.png";
     			return imagePath;    
     		}
     	}	
     }
     
     
-    /**
-     * Method to change velocity of the car
-     */
-    public void changeVelocity(int newVelocity)
-    {
-    	if (this.facingRight) {
-    	this.dx += newVelocity;
-    	} else {
-    	this.dx -= newVelocity;
-    	}
-    }
+
     
     /**
      * Method to move car
@@ -192,6 +200,27 @@ public class Car extends Sprite{
 	 * GETTER AND SETTER METHODS
 	 * *********
 	 */
+    
+    /**
+     * Method to change velocity of the car
+     */
+    public void setDX(int newVelocity)
+    {
+    	if (this.facingRight) {
+    	this.dx = newVelocity;
+    	} else {
+    	this.dx = -newVelocity;
+    	}
+    }
+    
+    public void setView(View view){
+    	this.view = view;
+    }
+    
+    public void setStartingNumberOfCars(int startingNumberOfCars){
+    	this.startingNumberOfCars = startingNumberOfCars;
+    }
+        
 
 	@Override
 	int getX() {
@@ -212,5 +241,10 @@ public class Car extends Sprite{
 	int getImageHeight() {
 		return this.image.getHeight(view);
 	}
-  
+	
+	@Override
+	public String getType(){
+		return "Car";
+	}
+	
 }

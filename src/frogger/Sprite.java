@@ -24,7 +24,7 @@ public abstract class Sprite extends Observable{
 	 * Changes the velocity of each sprite
 	 * @param newVelocity
 	 */
-	abstract void changeVelocity(int newVelocity);
+	abstract void setDX(int newVelocity);
 
 	
 	/***********
@@ -36,6 +36,7 @@ public abstract class Sprite extends Observable{
 	abstract int getY();
 	abstract int getImageWidth();
 	abstract int getImageHeight();
+	abstract String getType();
 
 	
 }
