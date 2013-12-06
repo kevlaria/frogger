@@ -1,3 +1,5 @@
+// Gary Cheung, Kevin Lee
+
 package frogger;
 
 import java.awt.Graphics;
@@ -9,9 +11,12 @@ import java.util.Observer;
 import javax.swing.JPanel;
 public class View extends JPanel implements Observer{
 
-	protected Background background; // This is set by the Froger class
-	protected Frogger controller;// This is set by the Froger class
+	private Background background; // This is set by the Frogger class
+	private Frogger controller;// This is set by the Frogger class
 
+	/**
+	 * Constructor for View
+	 */
 	public View(){}
 	
 	/**
@@ -38,8 +43,20 @@ public class View extends JPanel implements Observer{
      */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		repaint();
-		
+		repaint();	
+	}
+	
+	/***********
+	 * GETTER AND SETTER METHODS
+	 * *********
+	 */
+	
+	public void setBackground(Background background){
+		this.background = background;
+	}
+	
+	public void setController(Frogger controller){
+		this.controller = controller;
 	}
 
     

@@ -1,3 +1,5 @@
+// Gary Cheung, Kevin Lee
+
 package frogger;
 
 import java.awt.Color;
@@ -10,11 +12,14 @@ public class Background {
 	private static final int centerDivideHeight = 10;
 	private static final int centerDivideWidth = 20;
 	
-	protected View view; // this is assigned by the Frogger class
+	private View view; // this is assigned by the Frogger class
 	private int width;
 	private int height;
 	private boolean isGameOver; // this is assigned by the Frogger class
 	
+	/**
+	 * Constructor for Background
+	 */
 	public Background() {
 		this.isGameOver = false;
 	}
@@ -56,12 +61,17 @@ public class Background {
 		}
 		
 	}
+
 	
-	
-	/**
-	 * Allows controller to change isGameOver instance variable
-	 * @param setting
+	/***********
+	 * SETTER METHODS
+	 * *********
 	 */
+	
+	public void setView(View view){
+		this.view = view;
+	}
+	
 	public void setIsGameOver(boolean setting){
 		this.isGameOver = setting;
 	}

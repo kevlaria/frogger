@@ -1,3 +1,5 @@
+// Gary Cheung, Kevin Lee
+
 package frogger;
 
 import java.awt.Graphics;
@@ -13,14 +15,13 @@ import javax.swing.JFrame;
 
 public class Car extends Sprite{
 
-    private Image image;
     private View view; // this is assigned by the Frogger class
     private int startingNumberOfCars; // this is assigned by the Frogger class
-    boolean facingRight;
+    private boolean facingRight;
+    private Image image;
 
 	private static final int upperLaneYCoordinate = 65;
 	private static final int lowerLaneYCoordinate = 130;
-
     
     private static final int leftMostXCoordinate = -10;
     private static final int rightMostXCoordinate = 750;
@@ -39,7 +40,6 @@ public class Car extends Sprite{
     	if (this.facingRight){
             this.image = loadImage(imagePath);
         	this.y = lowerLaneYCoordinate;    	// NB - starting x-coordinate created in this.createCarSpecs
-
     	} else {
             this.image = loadImage(imagePath);
         	this.y = upperLaneYCoordinate;    	// NB - starting x-coordinate created in this.createCarSpecs
@@ -86,10 +86,8 @@ public class Car extends Sprite{
         		this.x = leftMostXCoordinate;
         	} else {
            		this.x = rightMostXCoordinate;   		
-        	}    		
-    		
-    	}
-    	
+        	}    			
+    	}	
     }
     
     /**
@@ -182,7 +180,7 @@ public class Car extends Sprite{
     /**
      * Method to load image
      * @param fileName
-     * @return
+     * @return the image
      */
     public Image loadImage(String fileName){
             BufferedImage img = null;
@@ -223,22 +221,22 @@ public class Car extends Sprite{
         
 
 	@Override
-	int getX() {
+	public int getX() {
 		return this.x;
 	}
 
 	@Override
-	int getY() {
+	public int getY() {
 		return this.y;
 	}
 
 	@Override
-	int getImageWidth() {
+	public int getImageWidth() {
 		return this.image.getWidth(view);
 	}
 
 	@Override
-	int getImageHeight() {
+	public int getImageHeight() {
 		return this.image.getHeight(view);
 	}
 	

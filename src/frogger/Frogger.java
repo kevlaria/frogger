@@ -1,3 +1,14 @@
+// Gary Cheung, Kevin Lee
+// Methods:
+
+// - Game Administration Methods
+// - Sprite-related Methods
+// - Level Changing Related Methods
+// - Component Creation Methods
+// - Key Action Components
+// - Button Action Components
+// - Getter and Setter Methods
+
 package frogger;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,30 +33,38 @@ import javax.swing.JTextField;
 public class Frogger extends JFrame implements Runnable{
 
 	private JFrame frame;
-	private View view;
+
 	private Background background;
 	private JButton goButton;
 	private JButton pauseButton;
 	private JPanel buttonPanel;
-
-	private Cast cast;
-	protected Frog frog;
-	public enum Orientation { UP, RIGHT, DOWN, LEFT };
-	private int carCount;
-	private int carVelocity;
-	
 	private JTextField scorePanel;
 	private int score;
 	private JTextField livesPanel;
 	private int lives;
+	
+	private View view;
+	private Cast cast;
+	private Timer timer;
+
+	private Frog frog;
+	public enum Orientation { UP, RIGHT, DOWN, LEFT };
+	private int carCount;
+	private int carVelocity;
+	
 	private int level;
 	private boolean isGameOver;
 	private boolean isPaused;
-	private Timer timer;
 	private boolean needToAddCar;
 	
 	private static final int levelUpFactor = 2;
 	private final int numberOfCarsToStart = 6;
+
+	
+	/***********
+	 * GAME ADMINISTRATION METHODS
+	 * *********
+	 */
 	
 	/**
 	 * Launch the application.
@@ -73,14 +92,14 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	public void run(){	
 
-		/**
-		 * Controller assigns Background and View to each other, as well as the controller
-		 */
-		this.view.controller = this;		
-		this.background.view = this.view;
-		
-		
+		//Controller assigns Background and View to each other, as well as the controller
+		 
+		this.view.setController(this);		
+		this.background.setView(this.view);	
+
+		//Add Cars
 		this.addCars(numberOfCarsToStart);
+		
 		//Add Frog
 		this.frog = this.createNewFrog();
 		this.cast.addSprites(frog);
@@ -110,7 +129,7 @@ public class Frogger extends JFrame implements Runnable{
 		if (this.lives <= 0){
 			this.isGameOver = true;
 			background.setIsGameOver(true);
-			this.frog.alive = false;
+			this.frog.setAlive(false);
 		}
 		return this.isGameOver;
 	}
@@ -153,10 +172,11 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	public Frog createNewFrog(){
 		Frog frog = new Frog();
-		frog.view = this.view;
+		frog.setView(this.view);
 		frog.addObserver(view);
 		return frog;
 	}
+	
 	
 	/***********
 	 * LEVEL CHANGING RELATED METHODS
@@ -178,7 +198,7 @@ public class Frogger extends JFrame implements Runnable{
 		}	
 		
 		if (this.needToAddCar){
-			if (this.okToAddCar()){
+			if (this.okToAddCar()){ // If car can't be added, try again in the next 'Move'
 				this.addCars(1);
 				this.needToAddCar = false;
 			}
@@ -201,8 +221,12 @@ public class Frogger extends JFrame implements Runnable{
     	}
 	}
 
+	/**
+	 * Checks to see if there's a space to add a new car either from the left edge or the right edge
+	 * @return true if there's a space to add a new car
+	 */
 	public boolean okToAddCar(){
-		int leftMostXCoordinate = 110;
+		int leftMostXCoordinate = 115;
 		int rightMostXCoordinate = 585;
 		int upperLaneYCoordinate = 65;
 		int lowerLaneYCoordinate = 130;
@@ -218,13 +242,12 @@ public class Frogger extends JFrame implements Runnable{
         				return false;
         			}
     			}  else {    // if the next carCount is an odd number, car will start from the left
-        			if (sprite.getX() - 40 < leftMostXCoordinate && (sprite.getY() == lowerLaneYCoordinate)){
+        			if (sprite.getX() - 45 < leftMostXCoordinate && (sprite.getY() == lowerLaneYCoordinate)){
             			return false;
         			}
     			}
     		}
-    	}
-    	
+    	} 	
     	return true;
 	}
 
@@ -232,6 +255,7 @@ public class Frogger extends JFrame implements Runnable{
 	/**
 	 * Method to determine whether frog is hit or not
 	 * Compares the x / y coordinates of the frog and all the cars
+	 * @return true if the frog and a car occupy the same set of coordinates
 	 */
 	public boolean isFrogSquished(Sprite sprite){	
 		boolean isFrogSquished = false;
@@ -260,7 +284,7 @@ public class Frogger extends JFrame implements Runnable{
 			if (	(frogMinY > spriteMinY && frogMinY < spriteMaxY) || // frog's bottom side is within car range
 						(frogMaxY > spriteMinY && frogMaxY < spriteMaxY)	) { // frog's top side within car range
 								isFrogSquished = true;
-				    			this.frog.alive = false;
+				    			this.frog.setAlive(false);
 				    			this.lives = lives - 1;
 				 }
     	}
@@ -270,8 +294,7 @@ public class Frogger extends JFrame implements Runnable{
 	/**
 	 * Resets the frog when it either crosses the road or gets crushed
 	 */
-	public void resetFrog()
-	{
+	public void resetFrog(){
 		this.cast.removeSprites(this.frog);
 		this.frog = createNewFrog();
 		this.cast.addSprites(this.frog);
@@ -381,7 +404,7 @@ public class Frogger extends JFrame implements Runnable{
         this.frame.addKeyListener(new KeyListener() {	
 			@Override
             public void keyPressed(KeyEvent e) {
-				if (!isPaused && frog.alive){
+				if (!isPaused && frog.getAlive()){
 					if(e.getKeyCode() == KeyEvent.VK_UP) {                 
 						frog.update();
 						Boolean roadCrossed = frog.crossedRoad();
@@ -462,8 +485,7 @@ public class Frogger extends JFrame implements Runnable{
 	 */
 	private class Move extends TimerTask {
 		public void run(){
-			
-			
+					
 			if(!isGameOver()){	 // Only run if the game is not yet over			
 				Cast cast = getCast();
 				ArrayList<Sprite> spriteList = cast.getSprites();
@@ -482,12 +504,10 @@ public class Frogger extends JFrame implements Runnable{
 								e.printStackTrace();
 							}			    		
 				    		resetFrog();
-				    	}
-		    			
+				    	}		
 		    		}
 		    	}
 				levelUpCheck();
-
 
 			} else { // if game is over, simply repaint a "Game Over" background
 				frame.repaint();

@@ -1,3 +1,5 @@
+// Gary Cheung, Kevin Lee
+
 package frogger;
 
 import java.awt.Graphics;
@@ -8,23 +10,21 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-
 public class Frog extends Sprite {
-
 	
 	private Image image;
-	protected View view;
-	boolean alive;
-	Orientation direction;
-	public enum Orientation { UP, RIGHT, DOWN, LEFT };
+	private View view;
+	private boolean alive;
+	private Orientation direction;
+	private enum Orientation { UP, RIGHT, DOWN, LEFT };
 	
-   private static final int minX = 0;
-   private static final int maxX = 800;
-   private static final int maxY = 200;
-   private static final int minY = 0;
-   private static final int destinationY = 30;
-   private static final int waitTimeForNewFrog = 1000;
-   private static final int oneJump = 30;
+	private static final int minX = 0;
+	private static final int maxX = 800;
+	private static final int maxY = 200;
+	private static final int minY = 0;
+	private static final int destinationY = 30;
+	private static final int waitTimeForNewFrog = 1000;
+	private static final int oneJump = 30;
 
 	/**
 	 * Constructor for frog
@@ -111,8 +111,7 @@ public class Frog extends Sprite {
 	 */
 	public void squishFrog() throws InterruptedException
 	{
-		this.image = loadImage("src/Images_for_Frogger/splat.gif");
-		
+		this.image = loadImage("src/Images_for_Frogger/splat.gif");	
 		setChanged();
     	notifyObservers(); 
     	//Wait a second 
@@ -256,7 +255,7 @@ public class Frog extends Sprite {
     /**
      * Method to load image
      * @param fileName
-     * @return
+     * @return the image
      */
     public Image loadImage(String fileName){
             BufferedImage img = null;
@@ -284,23 +283,23 @@ public class Frog extends Sprite {
 	}
 
 	/***********
-	 * GETTER METHODS
+	 * GETTER AND SETTER METHODS
 	 * *********
 	 */
     
 	@Override
-	int getX() {
+	public int getX() {
 		return this.x;
 	}
 
 	@Override
-	int getY() {
+	public int getY() {
 		return this.y;
 	}
 
 
 	@Override
-	void setDX(int newVelocity) {
+	public void setDX(int newVelocity) {
 		//Not applicable for Frog object
 	}
 
@@ -308,7 +307,7 @@ public class Frog extends Sprite {
 
 
 	@Override
-	int getImageWidth() {
+	public int getImageWidth() {
 		return this.image.getWidth(view);
 	}
 
@@ -316,7 +315,7 @@ public class Frog extends Sprite {
 
 
 	@Override
-	int getImageHeight() {
+	public int getImageHeight() {
 		return this.image.getHeight(view);
 	}
 	
@@ -325,5 +324,16 @@ public class Frog extends Sprite {
 		return "Frog";
 	}
 
+	public boolean getAlive(){
+		return this.alive;
+	}
+	
+	public void setView(View view){
+		this.view = view;
+	}
+	
+	public void setAlive(boolean alive){
+		this.alive = alive;
+	}
 	
 }

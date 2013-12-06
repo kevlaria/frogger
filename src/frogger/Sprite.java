@@ -1,3 +1,5 @@
+// Gary Cheung, Kevin Lee
+
 package frogger;
 
 import java.awt.Graphics;
