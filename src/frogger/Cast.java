@@ -1,5 +1,3 @@
-// Gary Cheung, Kevin Lee
-
 package frogger;
 
 import java.util.ArrayList;

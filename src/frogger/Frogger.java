@@ -1,14 +1,3 @@
-// Gary Cheung, Kevin Lee
-// Methods:
-
-// - Game Administration Methods
-// - Sprite-related Methods
-// - Level Changing Related Methods
-// - Component Creation Methods
-// - Key Action Components
-// - Button Action Components
-// - Getter and Setter Methods
-
 package frogger;
 import java.awt.BorderLayout;
 import java.awt.Color;
